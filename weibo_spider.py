@@ -35,7 +35,7 @@ def getOid(pageContent):
 		sys.exit(1)
 
 def getHeadPic(userName, pageContent):
-	path = expanduser("~")+'/Desktop/'+userName+'.jpg'
+	path = expanduser("~")+'/'+userName+'.jpg'
 	xhtml = etree.HTML(pageContent.text)
 	imgLis = xhtml.xpath('//div[@class="pf_head_pic"]/img/@src')
 	loadedImg = requests.get(imgLis[0], stream=True)
@@ -50,7 +50,7 @@ def getFerList(userName, pageContent):
 
 if __name__ == "__main__":
 	cheTimeOut(handleTimeOut, 8)
-	userId = 'skyfather'
+	userId = 'hanhan'
 	content = getContent(userId)
 	userName = getName(content)
 	userOid = getOid(content)
