@@ -3,7 +3,7 @@ import re, requests, signal, sys, shutil
 from lxml import etree
 from os.path import expanduser
 
-'''By DaDiao Liu'''
+'''By DaDiao Liu & DADIAO LIN'''
 
 def getHeadIcon(path, userId):
         if userId == '':
