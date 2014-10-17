@@ -1,69 +1,17 @@
 #-*- coding: utf-8 -*-
-import re, requests, signal, sys, shutil
 import sys
 import getopt
+import getHeadIcon
 
 
-from lxml import etree
-from os.path import expanduser
 
-def handleTimeOut(signum, frame):
-	print "超时 请检查防火墙设置或更改超时时间"
-	sys.exit(1)
-
-def cheTimeOut(handler, sec):
-	signal.signal(signal.SIGALRM, handleTimeOut)
-	signal.setitimer(signal.ITIMER_REAL, sec)
-
-def getContent(userId):
-	try:
-		userId = "http://weibo.com/"+str(userId)
-		userAgent = {'User-agent': 'Googlebot'}
-		return requests.get(userId, headers=userAgent)
-	except requests.exceptions.ConnectionError:
-		print "请检查您的网络连接"
-		sys.exit(1)
-
-def getName(pageContent):
-	try:
-		return re.findall(r"CONFIG\['onick'\]='(.*?)'", pageContent.text)[0].encode('utf-8')
-	except IndexError:
-		print "没有找到这个用户"
-		sys.exit(1)
-
-def getOid(pageContent):
-	try:
-		return re.findall(r"CONFIG\['oid'\]='(.*?)'", pageContent.text)[0].encode('utf-8')
-	except IndexError:
-		print "没有找到这个用户"
-		sys.exit(1)
-
-def getHeadPic(userName, pageContent, path):
-	if path=='':
-		path = expanduser("~")+'/'+userName+'.jpg'
-	else:
-		path = path+'/'+userName+'.jpg'
-	xhtml = etree.HTML(pageContent.text)
-	imgLis = xhtml.xpath('//div[@class="pf_head_pic"]/img/@src')
-	loadedImg = requests.get(imgLis[0], stream=True)
-	if loadedImg.status_code == 200:
-		with open(path, 'wb') as f:
-			loadedImg.raw.decode_content = True
-			shutil.copyfileobj(loadedImg.raw, f)   
-			print "头像已下载到: "+path
-
+#???????
 def getFerList(userName, pageContent):
 	pass
 
 
-def getHeadIcon(path, userId):
-	cheTimeOut(handleTimeOut, 8)
-	content = getContent(userId)
-	userName = getName(content)
-	userOid = getOid(content)
-	getHeadPic(userName, content, path)
-	print "用户名: "+userName
 
+#帮助信息
 def usage():
     print "wbofi usage:"
     print "-h --help: help message"
@@ -72,6 +20,7 @@ def usage():
     print "-u --user: set user id or name"
     print "--headicon: get user headIcon"
 
+#版本信息  后面可以进行调整
 def version():
     print "wbofi version 0.0.0.0"
 
@@ -81,11 +30,20 @@ def main(argv):
     user = ''
     try :
         opts, args = getopt.getopt(argv[1:], 'hvp:u:',['help', 'version', 'path=', 'user=', 'headicon'])
+        '''getopt的三个参数：
+        参数1： 待处理数组
+        参数2： 短命令  短命令参数后面如果加上:则意味着后面要加参数 例如 p: 意味着输入 -p 后要加一个参数（路径） 
+                h 则意味着输入 -h 不需要参数
+        参数3： 长命令  长命令后面加 = 意味着后面要加参数  同上
+
+        新增加命令的时候请务必修改此处
+        '''
     except getopt.GetoptError, err:
         print str(err)
         usage()
         sys.exit(2)
 
+#以下用于处理参数
     for o, a in opts:
         if o in('-h', '--help'):
             usage()
@@ -98,7 +56,7 @@ def main(argv):
         elif o in ('-u', '--user'):
             user = a
         elif o in ('--headicon'):
-            getHeadIcon(path, user)
+            getHeadIcon.getHeadIcon(path, user)
             sys.exit(1)
         else:
             sys.exit(3)
