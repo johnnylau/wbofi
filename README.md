@@ -2,7 +2,7 @@
 
 -------
 
-This is a spider project for sina weibo, this little file can transfer userid you type into user's name and download thumb image into your desktop
+This is a spider project for sina weibo, this little file can transfer userid you type into user's name and download avatar image into your desktop
 
 ## USAGE
 
